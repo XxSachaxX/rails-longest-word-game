@@ -9,15 +9,13 @@ class GamesController < ApplicationController
   def score
     @attempt = params[:word]
     @letters = params[:letters]
-    url = "https://wagon-dictionary.herokuapp.com/#{@attempt}"
-    word_serialized = URI.open(url).read
-    @word = JSON.parse(word_serialized)
+    parse(@attempt)
     if !include?(@attempt, @letters)
       @score = "Sorry but #{@attempt} can't be built from #{@letters} "
     elsif !@word['found']
       @score = "Sorry but #{@attempt} does not seem to be a valid ENGLISH word"
     else
-    @score = "Congratulations, #{@attempt} is a Valid english word"
+      @score = "Congratulations, #{@attempt} is a Valid english word"
     end
   end
 
@@ -25,3 +23,9 @@ class GamesController < ApplicationController
     attempt.chars.all? { |letter| attempt.count(letter) <= letters.count(letter) }
   end
 end
+
+  def parse(attempt)
+    url = "https://wagon-dictionary.herokuapp.com/#{attempt}"
+    word_serialized = URI.open(url).read
+    @word = JSON.parse(word_serialized)
+  end
